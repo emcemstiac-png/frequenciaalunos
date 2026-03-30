@@ -277,7 +277,7 @@
 
     <script>
         // ============================================
-        // CONFIGURAÇÃO
+        // CONFIGURAÇÃO - CORRIGIDA COM SEU USUÁRIO
         // ============================================
         const PLANILHA_ID = '1UzzuE4kERhznDw76NuAaHjXxMbWYqNXshLle5ZZ4eHo';
         const NOME_ABA = 'Aluno';
@@ -345,11 +345,12 @@
                     const valores = linhas[i].split(',').map(v => v.replace(/"/g, '').trim());
                     const aluno = {};
                     cabecalhos.forEach((cab, idx) => aluno[cab] = valores[idx]);
-                    dadosPlanilha.push(aluno);
+                    if (aluno.id && aluno.id.trim()) {
+                        dadosPlanilha.push(aluno);
+                    }
                 }
                 
                 addDebug(`✅ Carregados ${dadosPlanilha.length} alunos`);
-                addDebug(`📊 IDs: ${dadosPlanilha.map(a => a.id).join(', ')}`);
                 return true;
             } catch (error) {
                 addDebug(`❌ Erro: ${error.message}`, true);
@@ -369,20 +370,18 @@
             return aluno;
         }
 
-        // Mostrar informações do aluno (usa o ID para buscar a foto)
+        // Mostrar informações do aluno
         function mostrarAluno(aluno) {
             alunoAtual = aluno;
             
-            // Usa o ID do aluno para buscar a foto
             const idLimpo = String(aluno.id).trim();
             const fotoUrl = `${REPOSITORIO_FOTOS}${idLimpo}.jpg`;
             
-            addDebug(`📸 Buscando foto: ${fotoUrl} (ID: ${aluno.id})`);
+            addDebug(`📸 Buscando foto: ${fotoUrl}`);
             
             fotoAluno.src = fotoUrl;
             fotoAluno.onerror = function() {
                 addDebug(`⚠️ Foto não encontrada: ${fotoUrl}`);
-                // Tenta .png como fallback
                 const fotoUrlPng = `${REPOSITORIO_FOTOS}${idLimpo}.png`;
                 addDebug(`🔄 Tentando fallback: ${fotoUrlPng}`);
                 fotoAluno.src = fotoUrlPng;
@@ -400,8 +399,6 @@
             btnEntrada.disabled = false;
             btnSaida.disabled = false;
             statusRegistro.innerHTML = `⚠️ Aluno identificado. Selecione ENTRADA ou SAÍDA.`;
-            
-            addDebug(`👤 Aluno carregado: ${aluno.nome} (ID: ${aluno.id})`);
         }
 
         function limparAluno() {
@@ -423,7 +420,7 @@
                 return;
             }
             
-            addDebug(`📤 Registrando ${tipo} para ${alunoAtual.nome} (ID: ${alunoAtual.id})`);
+            addDebug(`📤 Registrando ${tipo} para ${alunoAtual.nome}`);
             btnEntrada.disabled = true;
             btnSaida.disabled = true;
             statusRegistro.innerHTML = `⏳ Registrando ${tipo}...`;
@@ -508,6 +505,7 @@
         // Inicializar
         async function init() {
             addDebug('🚀 Sistema de frequência iniciado');
+            addDebug(`📁 Repositório: ${REPOSITORIO_FOTOS}`);
             const carregou = await carregarAlunos();
             if (!carregou) {
                 addDebug('⚠️ Verifique a planilha!', true);
