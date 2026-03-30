@@ -2,59 +2,104 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Frequência de Alunos</title>
     <style>
         * {
             box-sizing: border-box;
         }
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
+            font-family: 'Inter', Arial, sans-serif;
             background: #f5f5f5;
-        }
-        h1 {
-            color: #3d441e;
-            margin-bottom: 30px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         .container {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        input {
+            max-width: 550px;
             width: 100%;
-            padding: 15px;
-            font-size: 18px;
-            text-align: center;
-            border: 2px solid #ddd;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-family: monospace;
-            letter-spacing: 1px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
-        input:focus {
+        .cabecalho {
+            background: #3d441e;
+            padding: 25px 20px;
+            text-align: center;
+        }
+        .logo-escola {
+            max-width: 100px;
+            height: auto;
+            margin-bottom: 15px;
+            background: white;
+            border-radius: 12px;
+            padding: 8px;
+            display: inline-block;
+        }
+        .cabecalho h1 {
+            color: white;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        .cabecalho p {
+            color: rgba(255,255,255,0.8);
+            margin: 5px 0 0;
+            font-size: 0.85rem;
+        }
+        .conteudo {
+            padding: 25px;
+        }
+        .campo-leitura {
+            margin-bottom: 25px;
+        }
+        .campo-leitura label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #3d441e;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .campo-leitura input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 18px;
+            font-family: monospace;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        .campo-leitura input:focus {
             outline: none;
             border-color: #3d441e;
+            background: white;
         }
         .botoes-acao {
             display: flex;
             gap: 15px;
-            margin: 20px 0;
+            margin-bottom: 25px;
         }
         button {
             flex: 1;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
             border: none;
-            border-radius: 10px;
+            border-radius: 40px;
             cursor: pointer;
             transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         button.entrada {
             background: #4CAF50;
@@ -62,7 +107,7 @@
         }
         button.entrada:hover {
             background: #45a049;
-            transform: scale(1.02);
+            transform: translateY(-2px);
         }
         button.saida {
             background: #f44336;
@@ -70,112 +115,164 @@
         }
         button.saida:hover {
             background: #da190b;
-            transform: scale(1.02);
+            transform: translateY(-2px);
         }
         button:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
-        .info-aluno {
-            background: #f9f9f9;
-            border-radius: 15px;
+        .card-aluno {
+            background: #f8f9fa;
+            border-radius: 20px;
             padding: 20px;
             margin: 20px 0;
             display: none;
             border-left: 5px solid #3d441e;
+            text-align: center;
         }
-        .info-aluno img {
-            max-width: 120px;
+        .foto-aluno {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            margin-bottom: 10px;
+            object-fit: cover;
+            margin: 0 auto 15px;
+            border: 3px solid #3d441e;
+            background: white;
         }
-        .info-aluno h3 {
-            margin: 10px 0;
-            color: #3d441e;
-        }
-        .info-aluno p {
+        .nome-aluno {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e2b;
             margin: 5px 0;
+        }
+        .turma-aluno {
             color: #666;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+        .id-aluno {
+            color: #888;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+        .status-registro {
+            background: #f0f0f0;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 0.85rem;
+            text-align: center;
+            color: #555;
+            margin-top: 15px;
         }
         .mensagem {
-            margin-top: 20px;
             padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-weight: 500;
+            text-align: center;
         }
         .mensagem.sucesso {
             background: #d4edda;
             color: #155724;
-            border: 1px solid #c3e6cb;
         }
         .mensagem.erro {
             background: #f8d7da;
             color: #721c24;
-            border: 1px solid #f5c6cb;
         }
         .mensagem.info {
             background: #d1ecf1;
             color: #0c5460;
-            border: 1px solid #bee5eb;
+        }
+        .debug-toggle {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 0.7rem;
+            padding: 8px;
+            margin-top: 10px;
+            width: auto;
+            flex: none;
         }
         .debug-box {
             background: #f0f0f0;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: left;
-            font-size: 11px;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 0.7rem;
             font-family: monospace;
-            max-height: 200px;
+            max-height: 150px;
             overflow: auto;
-            border-radius: 8px;
+            border-radius: 10px;
             display: none;
+            text-align: left;
         }
         .debug-box.show {
             display: block;
         }
-        button.debug-toggle {
-            background: #666;
-            font-size: 12px;
-            padding: 5px 10px;
-            margin-top: 10px;
-            width: auto;
+        footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 0.7rem;
+            color: #aaa;
+            border-top: 1px solid #eee;
         }
-        .status-registro {
-            font-size: 14px;
-            color: #666;
-            margin-top: 10px;
+        @media (max-width: 480px) {
+            .conteudo {
+                padding: 20px;
+            }
+            .botoes-acao {
+                gap: 10px;
+            }
+            button {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+            .foto-aluno {
+                width: 80px;
+                height: 80px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📋 Controle de Frequência</h1>
-        
-        <div>
-            <input type="text" id="codigoBarras" placeholder="🔍 Leia o código de barras ou digite o ID" autofocus>
+        <div class="cabecalho">
+            <img src="logo1.jpg" alt="Logo da Escola" class="logo-escola" onerror="this.src='https://placehold.co/100x100/3d441e/white?text=Logo'">
+            <h1>📋 Controle de Frequência</h1>
+            <p>Registro de entrada e saída de alunos</p>
         </div>
         
-        <div class="botoes-acao">
-            <button id="btnEntrada" class="entrada" disabled>📥 ENTRADA</button>
-            <button id="btnSaida" class="saida" disabled>📤 SAÍDA</button>
+        <div class="conteudo">
+            <div class="campo-leitura">
+                <label>🔍 CÓDIGO DO ALUNO</label>
+                <input type="text" id="codigoBarras" placeholder="Leia o código de barras ou digite o ID" autofocus>
+            </div>
+            
+            <div class="botoes-acao">
+                <button id="btnEntrada" class="entrada" disabled>📥 ENTRADA</button>
+                <button id="btnSaida" class="saida" disabled>📤 SAÍDA</button>
+            </div>
+            
+            <div id="cardAluno" class="card-aluno">
+                <img id="fotoAluno" class="foto-aluno" src="" alt="Foto">
+                <div class="nome-aluno" id="nomeAluno"></div>
+                <div class="turma-aluno" id="turmaAluno"></div>
+                <div class="id-aluno" id="idAluno"></div>
+            </div>
+            
+            <div id="mensagem" class="mensagem"></div>
+            <div id="statusRegistro" class="status-registro"></div>
+            
+            <button class="debug-toggle" onclick="toggleDebug()">🔧 Mostrar Debug</button>
+            <div id="debugBox" class="debug-box">
+                <strong>🔍 LOG DE DEBUG:</strong><br>
+                <div id="debugContent"></div>
+            </div>
         </div>
         
-        <div id="infoAluno" class="info-aluno">
-            <img id="fotoAluno" src="" alt="Foto">
-            <h3 id="nomeAluno"></h3>
-            <p id="turmaAluno"></p>
-            <p id="idAluno"></p>
-        </div>
-        
-        <div id="mensagem" class="mensagem"></div>
-        <div id="statusRegistro" class="status-registro"></div>
-        
-        <button class="debug-toggle" onclick="toggleDebug()">🔧 Mostrar Debug</button>
-        <div id="debugBox" class="debug-box">
-            <strong>🔍 LOG DE DEBUG:</strong><br>
-            <div id="debugContent"></div>
-        </div>
+        <footer>
+            Afro-Roteiros • Sistema de Frequência
+        </footer>
     </div>
 
     <script>
@@ -183,20 +280,19 @@
         // CONFIGURAÇÃO
         // ============================================
         const PLANILHA_ID = '1UzzuE4kERhznDw76NuAaHjXxMbWYqNXshLle5ZZ4eHo';
-        const NOME_ABA = 'Aluno';  // Nome da aba com os alunos
+        const NOME_ABA = 'Aluno';
         const REPOSITORIO_FOTOS = 'https://raw.githubusercontent.com/seu-usuario/frequenciaalunos/main/alunos/';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfShYvpYqOqUOocuCQw-GA4e_lfSHgSJcsV0p5R3JwKCt3ez2he8cIZD2uB3k-AUPH/exec';
         
         // Estado
         let alunoAtual = null;
         let dadosPlanilha = [];
-        let ultimoIdLido = null;
 
         // Elementos DOM
         const inputCodigo = document.getElementById('codigoBarras');
         const btnEntrada = document.getElementById('btnEntrada');
         const btnSaida = document.getElementById('btnSaida');
-        const infoAluno = document.getElementById('infoAluno');
+        const cardAluno = document.getElementById('cardAluno');
         const fotoAluno = document.getElementById('fotoAluno');
         const nomeAluno = document.getElementById('nomeAluno');
         const turmaAluno = document.getElementById('turmaAluno');
@@ -207,8 +303,7 @@
         function addDebug(msg, isError = false) {
             const debugContent = document.getElementById('debugContent');
             const time = new Date().toLocaleTimeString();
-            const className = isError ? 'color: red;' : '';
-            debugContent.innerHTML += `<div style="${className}">[${time}] ${msg}</div>`;
+            debugContent.innerHTML += `<div style="${isError ? 'color: red;' : ''}">[${time}] ${msg}</div>`;
             console.log(msg);
         }
 
@@ -230,7 +325,7 @@
         async function carregarAlunos() {
             try {
                 const url = `https://docs.google.com/spreadsheets/d/${PLANILHA_ID}/gviz/tq?tqx=out:csv&sheet=${NOME_ABA}`;
-                addDebug(`📡 Buscando dados em: ${url}`);
+                addDebug(`📡 Buscando dados...`);
                 
                 const response = await fetch(url);
                 const csvText = await response.text();
@@ -274,33 +369,30 @@
             return aluno;
         }
 
-        // Mostrar informações do aluno e ativar botões
+        // Mostrar informações do aluno
         function mostrarAluno(aluno) {
             alunoAtual = aluno;
             
             const fotoUrl = `${REPOSITORIO_FOTOS}${aluno.id}.jpg`;
             fotoAluno.src = fotoUrl;
             fotoAluno.onerror = function() {
-                this.src = 'https://placehold.co/120x120/ccc/666?text=Sem+foto';
+                this.src = 'https://placehold.co/100x100/ccc/666?text=Sem+foto';
             };
             nomeAluno.textContent = aluno.nome;
             turmaAluno.textContent = `Turma: ${aluno.turma || 'Não informada'}`;
             idAlunoElem.textContent = `ID: ${aluno.id}`;
             
-            infoAluno.style.display = 'block';
-            
-            // Ativar botões
+            cardAluno.style.display = 'block';
             btnEntrada.disabled = false;
             btnSaida.disabled = false;
-            
-            statusRegistro.innerHTML = `⚠️ Aluno ${aluno.nome} identificado. Selecione ENTRADA ou SAÍDA.`;
+            statusRegistro.innerHTML = `⚠️ Aluno identificado. Selecione ENTRADA ou SAÍDA.`;
             
             addDebug(`👤 Aluno carregado: ${aluno.nome}`);
         }
 
         function limparAluno() {
             alunoAtual = null;
-            infoAluno.style.display = 'none';
+            cardAluno.style.display = 'none';
             btnEntrada.disabled = true;
             btnSaida.disabled = true;
             statusRegistro.innerHTML = '';
@@ -317,9 +409,7 @@
                 return;
             }
             
-            addDebug(`📤 Registrando ${tipo} para ${alunoAtual.nome} (ID: ${alunoAtual.id})`);
-            
-            // Desabilitar botões durante o registro
+            addDebug(`📤 Registrando ${tipo} para ${alunoAtual.nome}`);
             btnEntrada.disabled = true;
             btnSaida.disabled = true;
             statusRegistro.innerHTML = `⏳ Registrando ${tipo}...`;
@@ -336,21 +426,17 @@
                     timestamp: agora.toISOString()
                 };
                 
-                addDebug(`📦 Dados a enviar: ${JSON.stringify(dados)}`);
-                
-                const response = await fetch(APPS_SCRIPT_URL, {
+                await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dados)
                 });
                 
-                addDebug(`✅ Registro de ${tipo} enviado com sucesso!`);
+                addDebug(`✅ Registro enviado!`);
+                mostrarMensagem(`✅ ${tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA'} registrada para ${alunoAtual.nome}!`, 'sucesso');
+                statusRegistro.innerHTML = `✅ ${tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA'} registrada às ${agora.toLocaleTimeString('pt-BR')}`;
                 
-                mostrarMensagem(`✅ ${tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA'} registrada com sucesso para ${alunoAtual.nome}!`, 'sucesso');
-                statusRegistro.innerHTML = `✅ ${tipo === 'entrada' ? 'ENTRADA' : 'SAÍDA'} registrada em ${agora.toLocaleTimeString('pt-BR')}`;
-                
-                // Limpar após registro bem-sucedido
                 setTimeout(() => {
                     limparAluno();
                     inputCodigo.value = '';
@@ -361,35 +447,30 @@
                 addDebug(`❌ Erro: ${error.message}`, true);
                 mostrarMensagem('Erro ao registrar. Tente novamente.', 'erro');
                 statusRegistro.innerHTML = '❌ Erro no registro. Tente novamente.';
-                
-                // Reativar botões em caso de erro
                 btnEntrada.disabled = false;
                 btnSaida.disabled = false;
             }
         }
 
-        // Processar código de barras lido
+        // Processar código lido
         async function processarCodigo(codigo) {
             if (!codigo || codigo.trim() === '') return;
             
             addDebug(`📷 Código lido: "${codigo}"`);
             inputCodigo.value = codigo;
             
-            // Se for o mesmo ID, não faz nada
             if (alunoAtual && String(alunoAtual.id) === String(codigo)) {
-                addDebug(`⚠️ Mesmo ID já está carregado`);
+                addDebug(`⚠️ Mesmo ID já carregado`);
                 return;
             }
             
-            // Limpar aluno anterior
             limparAluno();
             
-            // Buscar novo aluno
             const aluno = buscarAlunoPorId(codigo);
             
             if (!aluno) {
                 mostrarMensagem(`❌ Aluno com ID "${codigo}" não encontrado!`, 'erro');
-                addDebug(`❌ ID não encontrado na planilha`, true);
+                addDebug(`❌ ID não encontrado`, true);
                 inputCodigo.value = '';
                 inputCodigo.focus();
                 return;
@@ -412,17 +493,13 @@
 
         // Inicializar
         async function init() {
-            addDebug('🚀 Sistema de frequência iniciado...');
-            addDebug(`📊 Planilha ID: ${PLANILHA_ID}`);
-            addDebug(`📄 Aba: ${NOME_ABA}`);
-            addDebug(`🤖 Apps Script: ${APPS_SCRIPT_URL.substring(0, 60)}...`);
-            
+            addDebug('🚀 Sistema de frequência iniciado');
             const carregou = await carregarAlunos();
             if (!carregou) {
-                addDebug('⚠️ Verifique se a planilha está publicada e a aba existe!', true);
-                mostrarMensagem('Erro ao carregar dados da planilha. Verifique o console.', 'erro');
+                addDebug('⚠️ Verifique a planilha!', true);
+                mostrarMensagem('Erro ao carregar dados. Verifique o console.', 'erro');
             } else {
-                addDebug(`✅ Sistema pronto! Aguardando leitura de código de barras.`);
+                addDebug(`✅ Pronto! Aguardando leitura de código.`);
                 mostrarMensagem('✅ Sistema pronto! Leia o código de barras do aluno.', 'info');
             }
         }
