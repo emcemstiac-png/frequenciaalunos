@@ -281,7 +281,7 @@
         // ============================================
         const PLANILHA_ID = '1UzzuE4kERhznDw76NuAaHjXxMbWYqNXshLle5ZZ4eHo';
         const NOME_ABA = 'Aluno';
-        const REPOSITORIO_FOTOS = 'https://raw.githubusercontent.com/emcemstiac-png/frequenciaalunos/main/alunos/';
+        const REPOSITORIO_FOTOS = 'https://raw.githubusercontent.com/seu-usuario/frequenciaalunos/main/alunos/';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfShYvpYqOqUOocuCQw-GA4e_lfSHgSJcsV0p5R3JwKCt3ez2he8cIZD2uB3k-AUPH/exec';
         
         // Estado
@@ -369,15 +369,29 @@
             return aluno;
         }
 
-        // Mostrar informações do aluno
+        // Mostrar informações do aluno (usa o ID para buscar a foto)
         function mostrarAluno(aluno) {
             alunoAtual = aluno;
             
-            const fotoUrl = `${REPOSITORIO_FOTOS}${aluno.id}.jpg`;
+            // Usa o ID do aluno para buscar a foto
+            const idLimpo = String(aluno.id).trim();
+            const fotoUrl = `${REPOSITORIO_FOTOS}${idLimpo}.jpg`;
+            
+            addDebug(`📸 Buscando foto: ${fotoUrl} (ID: ${aluno.id})`);
+            
             fotoAluno.src = fotoUrl;
             fotoAluno.onerror = function() {
-                this.src = 'https://placehold.co/100x100/ccc/666?text=Sem+foto';
+                addDebug(`⚠️ Foto não encontrada: ${fotoUrl}`);
+                // Tenta .png como fallback
+                const fotoUrlPng = `${REPOSITORIO_FOTOS}${idLimpo}.png`;
+                addDebug(`🔄 Tentando fallback: ${fotoUrlPng}`);
+                fotoAluno.src = fotoUrlPng;
+                fotoAluno.onerror = function() {
+                    addDebug(`❌ Foto não encontrada em nenhum formato`);
+                    this.src = 'https://placehold.co/100x100/ccc/666?text=Sem+foto';
+                };
             };
+            
             nomeAluno.textContent = aluno.nome;
             turmaAluno.textContent = `Turma: ${aluno.turma || 'Não informada'}`;
             idAlunoElem.textContent = `ID: ${aluno.id}`;
@@ -387,7 +401,7 @@
             btnSaida.disabled = false;
             statusRegistro.innerHTML = `⚠️ Aluno identificado. Selecione ENTRADA ou SAÍDA.`;
             
-            addDebug(`👤 Aluno carregado: ${aluno.nome}`);
+            addDebug(`👤 Aluno carregado: ${aluno.nome} (ID: ${aluno.id})`);
         }
 
         function limparAluno() {
@@ -409,7 +423,7 @@
                 return;
             }
             
-            addDebug(`📤 Registrando ${tipo} para ${alunoAtual.nome}`);
+            addDebug(`📤 Registrando ${tipo} para ${alunoAtual.nome} (ID: ${alunoAtual.id})`);
             btnEntrada.disabled = true;
             btnSaida.disabled = true;
             statusRegistro.innerHTML = `⏳ Registrando ${tipo}...`;
