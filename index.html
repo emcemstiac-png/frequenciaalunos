@@ -73,32 +73,32 @@
 
         let alunoAtual = null;
 
-        // Buscar dados do aluno na planilha
-        async function buscarAluno(id) {
-            try {
-                const url = `https://docs.google.com/spreadsheets/d/${PLANILHA_ID}/gviz/tq?tqx=out:csv&sheet=alunos`;
-                const response = await fetch(url);
-                const csvText = await response.text();
-                
-                const linhas = csvText.split('\n');
-                const cabecalhos = linhas[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
-                
-                for (let i = 1; i < linhas.length; i++) {
-                    if (!linhas[i].trim()) continue;
-                    const valores = linhas[i].split(',').map(v => v.replace(/"/g, '').trim());
-                    const aluno = {};
-                    cabecalhos.forEach((cab, idx) => aluno[cab] = valores[idx]);
-                    
-                    if (aluno.id == id) {
-                        return aluno;
-                    }
-                }
-                return null;
-            } catch (error) {
-                console.error('Erro ao buscar aluno:', error);
-                return null;
+        // Buscar dados do aluno na planilha (aba "Aluno")
+async function buscarAluno(id) {
+    try {
+        const url = `https://docs.google.com/spreadsheets/d/${PLANILHA_ID}/gviz/tq?tqx=out:csv&sheet=Aluno`; // agora com "Aluno"
+        const response = await fetch(url);
+        const csvText = await response.text();
+        
+        const linhas = csvText.split('\n');
+        const cabecalhos = linhas[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+        
+        for (let i = 1; i < linhas.length; i++) {
+            if (!linhas[i].trim()) continue;
+            const valores = linhas[i].split(',').map(v => v.replace(/"/g, '').trim());
+            const aluno = {};
+            cabecalhos.forEach((cab, idx) => aluno[cab] = valores[idx]);
+            
+            if (aluno.id == id) {
+                return aluno;
             }
         }
+        return null;
+    } catch (error) {
+        console.error('Erro ao buscar aluno:', error);
+        return null;
+    }
+}
 
         // Mostrar informações do aluno
         function mostrarAluno(aluno) {
