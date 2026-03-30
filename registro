@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequência de Alunos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button {
+            cursor: pointer;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button.saida {
+            background: #f44336;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            display: none;
+        }
+        .info img {
+            max-width: 150px;
+            border-radius: 50%;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>Registro de Frequência</h1>
+    
+    <div>
+        <input type="text" id="alunoId" placeholder="Digite seu ID" autofocus>
+        <br>
+        <button onclick="registrar('entrada')">📥 ENTRADA</button>
+        <button onclick="registrar('saida')" class="saida">📤 SAÍDA</button>
+    </div>
+
+    <div id="infoAluno" class="info">
+        <img id="fotoAluno" src="" alt="Foto do aluno">
+        <h2 id="nomeAluno"></h2>
+        <p id="turmaAluno"></p>
+        <p id="status"></p>
+    </div>
+
+    <div id="mensagem"></div>
+
+    <script>
+        // ============================================
+        // CONFIGURAÇÃO
+        // ============================================
+        const PLANILHA_ID = '1Z6XwFV8Kycr6ijW6SQUTzQ7K0EFdGZLaQW-wglu9-NM';
+        const REPOSITORIO_FOTOS = 'https://raw.githubusercontent.com/seu-usuario/frequenciaalunos/main/alunos/';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/SEU_SCRIPT_ID/exec'; // será configurado depois
+
+        let alunoAtual = null;
+
+        // Buscar dados do aluno na planilha
+        async function buscarAluno(id) {
+            try {
+                const url = `https://docs.google.com/spreadsheets/d/${PLANILHA_ID}/gviz/tq?tqx=out:csv&sheet=alunos`;
+                const response = await fetch(url);
+                const csvText = await response.text();
+                
+                const linhas = csvText.split('\n');
+                const cabecalhos = linhas[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+                
+                for (let i = 1; i < linhas.length; i++) {
+                    if (!linhas[i].trim()) continue;
+                    const valores = linhas[i].split(',').map(v => v.replace(/"/g, '').trim());
+                    const aluno = {};
+                    cabecalhos.forEach((cab, idx) => aluno[cab] = valores[idx]);
+                    
+                    if (aluno.id == id) {
+                        return aluno;
+                    }
+                }
+                return null;
+            } catch (error) {
+                console.error('Erro ao buscar aluno:', error);
+                return null;
+            }
+        }
+
+        // Mostrar informações do aluno
+        function mostrarAluno(aluno) {
+            document.getElementById('fotoAluno').src = `${REPOSITORIO_FOTOS}${aluno.id}.jpg`;
+            document.getElementById('fotoAluno').onerror = function() {
+                this.src = 'https://placehold.co/150x150/ccc/666?text=Sem+foto';
+            };
+            document.getElementById('nomeAluno').textContent = aluno.nome;
+            document.getElementById('turmaAluno').textContent = `Turma: ${aluno.turma}`;
+            document.getElementById('infoAluno').style.display = 'block';
+        }
+
+        // Registrar entrada/saída
+        async function registrar(tipo) {
+            const id = document.getElementById('alunoId').value.trim();
+            if (!id) {
+                alert('Digite o ID do aluno');
+                return;
+            }
+
+            // Buscar dados do aluno se ainda não tiver
+            if (!alunoAtual || alunoAtual.id != id) {
+                document.getElementById('infoAluno').style.display = 'none';
+                document.getElementById('mensagem').innerHTML = '<div class="loading">Carregando dados do aluno...</div>';
+                
+                alunoAtual = await buscarAluno(id);
+                
+                if (!alunoAtual) {
+                    document.getElementById('mensagem').innerHTML = '<p style="color:red">❌ Aluno não encontrado!</p>';
+                    return;
+                }
+                mostrarAluno(alunoAtual);
+            }
+
+            // Enviar registro para o Apps Script
+            document.getElementById('mensagem').innerHTML = '<div class="loading">Registrando...</div>';
+            
+            try {
+                const agora = new Date();
+                const dados = {
+                    id: alunoAtual.id,
+                    nome: alunoAtual.nome,
+                    turma: alunoAtual.turma,
+                    acao: tipo,
+                    data: agora.toLocaleDateString('pt-BR'),
+                    hora: agora.toLocaleTimeString('pt-BR'),
+                    timestamp: agora.toISOString()
+                };
+
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // necessário para Apps Script
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                document.getElementById('mensagem').innerHTML = `
+                    <p style="color:green">✅ ${tipo === 'entrada' ? 'Entrada' : 'Saída'} registrada com sucesso!</p>
+                    <p>Aluno: ${alunoAtual.nome}</p>
+                    <p>Data: ${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR')}</p>
+                `;
+                
+                // Limpar ID para próximo aluno
+                document.getElementById('alunoId').value = '';
+                setTimeout(() => {
+                    document.getElementById('mensagem').innerHTML = '';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Erro ao registrar:', error);
+                document.getElementById('mensagem').innerHTML = '<p style="color:red">❌ Erro ao registrar. Tente novamente.</p>';
+            }
+        }
+
+        // Permitir Enter no campo
+        document.getElementById('alunoId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                registrar('entrada');
+            }
+        });
+    </script>
+</body>
+</html>
