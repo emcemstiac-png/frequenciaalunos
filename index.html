@@ -375,7 +375,7 @@
             alunoAtual = aluno;
             
             const idLimpo = String(aluno.id).trim();
-            const fotoUrl = `${REPOSITORIO_FOTOS}${idLimpo}.jpg`;
+            const fotoUrl = `${REPOSITORIO_FOTOS}${idLimpo}.jpg?v=${FOTO_VERSION}`;
             
             addDebug(`📸 Buscando foto: ${fotoUrl}`);
             
