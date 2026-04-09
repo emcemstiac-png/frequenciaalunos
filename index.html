@@ -271,17 +271,17 @@
         </div>
         
         <footer>
-            CEMSTIAC • Sistema de Frequência • Simone Pedro
+           Sistema de Frequência  • CEMSTIAC
         </footer>
     </div>
 
     <script>
         // ============================================
-        // CONFIGURAÇÃO - CORRIGIDA COM SEU USUÁRIO
+        // CONFIGURAÇÃO
         // ============================================
         const PLANILHA_ID = '1UzzuE4kERhznDw76NuAaHjXxMbWYqNXshLle5ZZ4eHo';
         const NOME_ABA = 'Aluno';
-        const REPOSITORIO_FOTOS = 'https://raw.githubusercontent.com/emcemstiac-png/frequenciaalunos/main/alunos/';
+        const REPOSITORIO_FOTOS = 'https://raw.githubusercontent.com/seu-usuario/frequenciaalunos/main/Alunos/';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfShYvpYqOqUOocuCQw-GA4e_lfSHgSJcsV0p5R3JwKCt3ez2he8cIZD2uB3k-AUPH/exec';
         
         // Estado
@@ -345,12 +345,11 @@
                     const valores = linhas[i].split(',').map(v => v.replace(/"/g, '').trim());
                     const aluno = {};
                     cabecalhos.forEach((cab, idx) => aluno[cab] = valores[idx]);
-                    if (aluno.id && aluno.id.trim()) {
-                        dadosPlanilha.push(aluno);
-                    }
+                    dadosPlanilha.push(aluno);
                 }
                 
                 addDebug(`✅ Carregados ${dadosPlanilha.length} alunos`);
+                addDebug(`📊 IDs: ${dadosPlanilha.map(a => a.id).join(', ')}`);
                 return true;
             } catch (error) {
                 addDebug(`❌ Erro: ${error.message}`, true);
@@ -374,23 +373,11 @@
         function mostrarAluno(aluno) {
             alunoAtual = aluno;
             
-            const idLimpo = String(aluno.id).trim();
-            const fotoUrl = `${REPOSITORIO_FOTOS}${idLimpo}.jpg`;
-            
-            addDebug(`📸 Buscando foto: ${fotoUrl}`);
-            
+            const fotoUrl = `${REPOSITORIO_FOTOS}${aluno.id}.jpg`;
             fotoAluno.src = fotoUrl;
             fotoAluno.onerror = function() {
-                addDebug(`⚠️ Foto não encontrada: ${fotoUrl}`);
-                const fotoUrlPng = `${REPOSITORIO_FOTOS}${idLimpo}.png`;
-                addDebug(`🔄 Tentando fallback: ${fotoUrlPng}`);
-                fotoAluno.src = fotoUrlPng;
-                fotoAluno.onerror = function() {
-                    addDebug(`❌ Foto não encontrada em nenhum formato`);
-                    this.src = 'https://placehold.co/100x100/ccc/666?text=Sem+foto';
-                };
+                this.src = 'https://placehold.co/100x100/ccc/666?text=Sem+foto';
             };
-            
             nomeAluno.textContent = aluno.nome;
             turmaAluno.textContent = `Turma: ${aluno.turma || 'Não informada'}`;
             idAlunoElem.textContent = `ID: ${aluno.id}`;
@@ -399,6 +386,8 @@
             btnEntrada.disabled = false;
             btnSaida.disabled = false;
             statusRegistro.innerHTML = `⚠️ Aluno identificado. Selecione ENTRADA ou SAÍDA.`;
+            
+            addDebug(`👤 Aluno carregado: ${aluno.nome}`);
         }
 
         function limparAluno() {
@@ -505,7 +494,6 @@
         // Inicializar
         async function init() {
             addDebug('🚀 Sistema de frequência iniciado');
-            addDebug(`📁 Repositório: ${REPOSITORIO_FOTOS}`);
             const carregou = await carregarAlunos();
             if (!carregou) {
                 addDebug('⚠️ Verifique a planilha!', true);
