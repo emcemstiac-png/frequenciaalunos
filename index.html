@@ -277,11 +277,11 @@
 
     <script>
         // ============================================
-        // CONFIGURAÇÃO
+        // CONFIGURAÇÃO - CORRIGIDA
         // ============================================
         const PLANILHA_ID = '1UzzuE4kERhznDw76NuAaHjXxMbWYqNXshLle5ZZ4eHo';
         const NOME_ABA = 'Aluno';
-        const REPOSITORIO_FOTOS = 'https://raw.githubusercontent.com/seu-usuario/frequenciaalunos/main/Alunos/';
+        const REPOSITORIO_FOTOS = 'https://raw.githubusercontent.com/emcemstiac-png/frequenciaalunos/main/Alunos/';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzfShYvpYqOqUOocuCQw-GA4e_lfSHgSJcsV0p5R3JwKCt3ez2he8cIZD2uB3k-AUPH/exec';
         
         // Estado
@@ -345,7 +345,9 @@
                     const valores = linhas[i].split(',').map(v => v.replace(/"/g, '').trim());
                     const aluno = {};
                     cabecalhos.forEach((cab, idx) => aluno[cab] = valores[idx]);
-                    dadosPlanilha.push(aluno);
+                    if (aluno.id && aluno.id.trim()) {
+                        dadosPlanilha.push(aluno);
+                    }
                 }
                 
                 addDebug(`✅ Carregados ${dadosPlanilha.length} alunos`);
@@ -374,10 +376,14 @@
             alunoAtual = aluno;
             
             const fotoUrl = `${REPOSITORIO_FOTOS}${aluno.id}.jpg`;
+            addDebug(`📸 Buscando foto: ${fotoUrl}`);
+            
             fotoAluno.src = fotoUrl;
             fotoAluno.onerror = function() {
-                this.src = 'https://placehold.co/100x100/ccc/666?text=Sem+foto';
+                addDebug(`⚠️ Foto não encontrada: ${fotoUrl}`);
+                this.src = 'https://placehold.co/200x200/ccc/666?text=Sem+foto';
             };
+            
             nomeAluno.textContent = aluno.nome;
             turmaAluno.textContent = `Turma: ${aluno.turma || 'Não informada'}`;
             idAlunoElem.textContent = `ID: ${aluno.id}`;
@@ -387,7 +393,7 @@
             btnSaida.disabled = false;
             statusRegistro.innerHTML = `⚠️ Aluno identificado. Selecione ENTRADA ou SAÍDA.`;
             
-            addDebug(`👤 Aluno carregado: ${aluno.nome}`);
+            addDebug(`👤 Aluno carregado: ${aluno.nome} (ID: ${aluno.id})`);
         }
 
         function limparAluno() {
@@ -494,6 +500,7 @@
         // Inicializar
         async function init() {
             addDebug('🚀 Sistema de frequência iniciado');
+            addDebug(`📁 Repositório: ${REPOSITORIO_FOTOS}`);
             const carregou = await carregarAlunos();
             if (!carregou) {
                 addDebug('⚠️ Verifique a planilha!', true);
