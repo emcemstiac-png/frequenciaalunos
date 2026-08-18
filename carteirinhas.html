@@ -1,1005 +1,320 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Carteirinha Escolar - CEMSTIAC</title>
 
-<!-- Biblioteca para código de barras -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 
 <style>
+*{box-sizing:border-box}
 
-* {
-    box-sizing: border-box;
+body{
+  margin:0;
+  padding:25px 12px;
+  font-family:Arial,sans-serif;
+  background:#eef4fa;
+  color:#0b355e;
 }
 
-body {
-
-    margin: 0;
-
-    padding: 30px 15px;
-
-    font-family: Arial, Helvetica, sans-serif;
-
-    background: #eef4fa;
-
-    color: #0b355e;
-
+.formulario{
+  max-width:700px;
+  margin:0 auto 25px;
+  background:#fff;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 3px 12px rgba(0,0,0,.15);
 }
 
-
-/* =========================
-   FORMULÁRIO
-========================= */
-
-.formulario {
-
-    max-width: 720px;
-
-    margin: 0 auto 30px;
-
-    background: white;
-
-    padding: 22px;
-
-    border-radius: 14px;
-
-    box-shadow: 0 3px 12px rgba(0,0,0,.15);
-
+label{
+  display:block;
+  font-weight:bold;
+  margin:10px 0 5px;
 }
 
-
-.formulario label {
-
-    display: block;
-
-    font-size: 17px;
-
-    font-weight: bold;
-
-    margin-top: 12px;
-
-    margin-bottom: 6px;
-
+input{
+  width:100%;
+  padding:11px;
+  font-size:16px;
+  border:1px solid #bbb;
+  border-radius:7px;
 }
 
-
-.formulario input {
-
-    width: 100%;
-
-    padding: 12px;
-
-    font-size: 17px;
-
-    border: 1px solid #bbb;
-
-    border-radius: 7px;
-
+.botoes{
+  text-align:center;
+  margin-top:18px;
 }
 
-
-.botoes {
-
-    text-align: center;
-
-    margin-top: 20px;
-
+button{
+  border:0;
+  padding:12px 24px;
+  margin:5px;
+  border-radius:7px;
+  color:#fff;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
+.gerar{background:#1677ee}
+.imprimir{background:#23ad4b}
 
-button {
-
-    border: none;
-
-    padding: 13px 30px;
-
-    margin: 5px 10px;
-
-    border-radius: 7px;
-
-    font-size: 17px;
-
-    font-weight: bold;
-
-    cursor: pointer;
-
+.area{
+  width:100%;
+  overflow-x:auto;
 }
 
-
-.gerar {
-
-    background: #1677ee;
-
-    color: white;
-
+.carteira{
+  width:700px;
+  height:480px;
+  margin:auto;
+  background:#fff;
+  border:2px solid #12395d;
+  border-radius:20px;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 4px 14px rgba(0,0,0,.18);
 }
 
-
-.imprimir {
-
-    background: #23ad4b;
-
-    color: white;
-
+.topo{
+  height:135px;
+  display:flex;
+  align-items:center;
+  padding:15px 30px;
 }
 
-
-
-/* =========================
-   ÁREA DA CARTEIRINHA
-========================= */
-
-.area-carteira {
-
-    width: 100%;
-
-    overflow-x: auto;
-
-    padding-bottom: 10px;
-
+.logo{
+  width:105px;
+  height:95px;
+  object-fit:contain;
 }
 
-
-.carteira {
-
-    width: 700px;
-
-    height: 480px;
-
-    margin: 0 auto;
-
-    background: white;
-
-    border: 2px solid #12395d;
-
-    border-radius: 20px;
-
-    overflow: hidden;
-
-    position: relative;
-
-    box-shadow: 0 5px 15px rgba(0,0,0,.20);
-
+.titulo{
+  flex:1;
+  text-align:center;
 }
 
-
-
-/* =========================
-   CABEÇALHO
-========================= */
-
-.topo {
-
-    height: 130px;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 15px 35px 8px;
-
+.titulo h1{
+  margin:0;
+  font-size:40px;
+  color:#063c6c;
 }
 
-
-.logo {
-
-    width: 110px;
-
-    height: 95px;
-
-    object-fit: contain;
-
-    flex-shrink: 0;
-
+.titulo p{
+  margin:3px 0;
+  font-size:16px;
+  font-weight:bold;
 }
 
-
-.titulo {
-
-    flex: 1;
-
-    text-align: center;
-
+.linha{
+  height:4px;
+  background:#0a4f82;
+  margin-top:8px;
 }
 
-
-.titulo h1 {
-
-    margin: 0;
-
-    font-size: 40px;
-
-    color: #063c6c;
-
-    letter-spacing: 2px;
-
+.conteudo{
+  height:255px;
+  display:flex;
+  padding:10px 28px;
+  overflow:hidden;
 }
 
-
-.titulo p {
-
-    margin: 3px 0;
-
-    font-size: 16px;
-
-    font-weight: bold;
-
+.foto{
+  width:180px;
+  height:225px;
+  object-fit:cover;
+  border:3px solid #0b4e80;
+  border-radius:14px;
+  flex-shrink:0;
 }
 
-
-.linha {
-
-    height: 4px;
-
-    background: #0a4f82;
-
-    width: 92%;
-
-    margin: 7px auto 0;
-
+.dados{
+  padding-left:24px;
+  color:#111;
 }
 
-
-
-/* =========================
-   FOTO E DADOS
-========================= */
-
-.conteudo {
-
-    height: 258px;
-
-    display: flex;
-
-    padding: 7px 28px 8px;
-
-    overflow: hidden;
-
+.rotulo{
+  color:#0a3e6b;
+  font-weight:bold;
+  font-size:16px;
 }
 
-
-.foto-area {
-
-    width: 190px;
-
-    height: 240px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    flex-shrink: 0;
-
-    overflow: hidden;
-
+.valor{
+  font-size:20px;
+  font-weight:bold;
+  margin-bottom:9px;
 }
 
-
-.foto {
-
-    width: 180px;
-
-    height: 225px;
-
-    object-fit: cover;
-
-    object-position: center;
-
-    border: 3px solid #0b4e80;
-
-    border-radius: 14px;
-
-    display: block;
-
+.nome{
+  font-size:22px;
+  line-height:1.1;
 }
 
-
-.dados {
-
-    flex: 1;
-
-    padding: 3px 5px 0 25px;
-
-    color: #111;
-
-    overflow: hidden;
-
+.rodape{
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:90px;
+  background:#073f6c;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  padding:10px 28px;
 }
 
-
-.rotulo {
-
-    color: #0a3e6b;
-
-    font-size: 16px;
-
-    font-weight: bold;
-
-    margin-bottom: 1px;
-
+.codigo-grande{
+  width:200px;
+  color:#fff;
+  font-size:38px;
+  font-weight:bold;
+  text-align:center;
 }
 
-
-.nome {
-
-    font-size: 21px;
-
-    line-height: 1.05;
-
-    font-weight: bold;
-
-    margin-bottom: 9px;
-
-    overflow-wrap: break-word;
-
+.barcode{
+  flex:1;
+  height:68px;
+  background:#fff;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:5px;
 }
 
-
-.valor {
-
-    font-size: 20px;
-
-    font-weight: bold;
-
-    margin-bottom: 8px;
-
+#codigoBarras{
+  max-width:100%;
+  height:55px;
 }
 
-
-.telefone {
-
-    font-size: 19px;
-
-    margin-bottom: 8px;
-
+@media print{
+  body{background:#fff;padding:0}
+  .formulario{display:none}
+  .carteira{box-shadow:none}
 }
-
-
-
-/* =========================
-   RODAPÉ AZUL
-========================= */
-
-.rodape {
-
-    position: absolute;
-
-    left: 0;
-
-    bottom: 0;
-
-    width: 100%;
-
-    height: 90px;
-
-    background: #073f6c;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 20px;
-
-    padding: 10px 28px;
-
-}
-
-
-.codigo-grande {
-
-    width: 200px;
-
-    color: white;
-
-    font-size: 38px;
-
-    font-weight: bold;
-
-    text-align: center;
-
-    flex-shrink: 0;
-
-}
-
-
-.barcode {
-
-    flex: 1;
-
-    height: 70px;
-
-    background: white;
-
-    border-radius: 10px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    overflow: hidden;
-
-    padding: 3px 10px;
-
-}
-
-
-#codigoBarras {
-
-    max-width: 100%;
-
-    height: 62px;
-
-}
-
-
-.aviso {
-
-    text-align: center;
-
-    margin-top: 15px;
-
-    color: #555;
-
-    font-size: 14px;
-
-}
-
-
-
-/* =========================
-   IMPRESSÃO
-========================= */
-
-@media print {
-
-    @page {
-
-        size: A4;
-
-        margin: 10mm;
-
-    }
-
-
-    body {
-
-        background: white;
-
-        padding: 0;
-
-    }
-
-
-    .formulario,
-    .aviso {
-
-        display: none !important;
-
-    }
-
-
-    .area-carteira {
-
-        overflow: visible;
-
-        padding: 0;
-
-    }
-
-
-    .carteira {
-
-        box-shadow: none;
-
-        margin: 0 auto;
-
-    }
-
-}
-
 </style>
-
 </head>
-
 
 <body>
 
-
-<!-- =========================
-     FORMULÁRIO
-========================= -->
-
 <div class="formulario">
 
+<label>Código do aluno</label>
+<input id="codigo" placeholder="Ex: ALU001">
 
-<label for="codigo">
-Código do aluno - Ex: ALU001
-</label>
+<label>Nome do aluno</label>
+<input id="nome" placeholder="Nome completo">
 
-<input
-id="codigo"
-type="text"
-placeholder="ALU001"
-autocomplete="off"
->
+<label>Turma</label>
+<input id="turma" placeholder="Ex: 6AM01">
 
-
-<label for="nome">
-Nome do aluno
-</label>
-
-<input
-id="nome"
-type="text"
-placeholder="Nome completo"
-autocomplete="off"
->
-
-
-<label for="turma">
-Turma
-</label>
-
-<input
-id="turma"
-type="text"
-placeholder="6AM01"
-autocomplete="off"
->
-
-
-<label for="telefone">
-Telefone de contato
-</label>
-
-<input
-id="telefone"
-type="tel"
-placeholder="(22) 99999-9999"
-autocomplete="off"
->
-
+<label>Telefone de contato</label>
+<input id="telefone" placeholder="Ex: (22) 99999-9999">
 
 <div class="botoes">
-
-
-<button
-class="gerar"
-type="button"
-onclick="gerarCarteirinha()"
->
-
-Gerar Carteirinha
-
-</button>
-
-
-<button
-class="imprimir"
-type="button"
-onclick="imprimirCarteirinha()"
->
-
-Imprimir
-
-</button>
-
-
+  <button class="gerar" onclick="gerar()">Gerar Carteirinha</button>
+  <button class="imprimir" onclick="window.print()">Imprimir</button>
 </div>
 
 </div>
 
+<div class="area">
 
-
-<!-- =========================
-     CARTEIRINHA
-========================= -->
-
-<div class="area-carteira">
-
-
-<div
-id="carteira"
-class="carteira"
->
-
-
-<!-- CABEÇALHO -->
+<div class="carteira">
 
 <div class="topo">
 
-
-<img
-src="logo1.jpg"
-alt="Logo CEMSTIAC"
-class="logo"
->
-
+<img src="logo1.jpg" class="logo">
 
 <div class="titulo">
-
-
-<h1>
-CEMSTIAC
-</h1>
-
-
-<p>
-Centro Municipal de Educação em
-</p>
-
-
-<p>
-Ciência, Tecnologia, Inovação, Arte e Cultura
-</p>
-
-
-<div class="linha"></div>
-
-
+  <h1>CEMSTIAC</h1>
+  <p>Centro Municipal de Educação em</p>
+  <p>Ciência, Tecnologia, Inovação, Arte e Cultura</p>
+  <div class="linha"></div>
 </div>
 
 </div>
-
-
-
-<!-- FOTO E DADOS -->
 
 <div class="conteudo">
 
-
-<div class="foto-area">
-
-
-<img
-id="fotoAluno"
-class="foto"
-alt="Foto do aluno"
->
-
-
-</div>
-
-
+<img id="fotoAluno" class="foto">
 
 <div class="dados">
 
+<div class="rotulo">Aluno:</div>
+<div id="nomeCarteira" class="valor nome">Nome do aluno</div>
 
-<div class="rotulo">
-Aluno:
-</div>
+<div class="rotulo">Turma:</div>
+<div id="turmaCarteira" class="valor">---</div>
 
+<div class="rotulo">Telefone:</div>
+<div id="telefoneCarteira" class="valor">---</div>
 
-<div
-id="nomeCarteira"
-class="nome"
->
-
-Nome do aluno
-
-</div>
-
-
-
-<div class="rotulo">
-Turma:
-</div>
-
-
-<div
-id="turmaCarteira"
-class="valor"
->
-
----
-
-</div>
-
-
-
-<div class="rotulo">
-Telefone de contato:
-</div>
-
-
-<div
-id="telefoneCarteira"
-class="valor telefone"
->
-
----
-
-</div>
-
-
-
-<div class="rotulo">
-Código:
-</div>
-
-
-<div
-id="codigoCarteira"
-class="valor"
->
-
----
-
-</div>
-
+<div class="rotulo">Código:</div>
+<div id="codigoCarteira" class="valor">---</div>
 
 </div>
 
 </div>
-
-
-
-<!-- RODAPÉ -->
 
 <div class="rodape">
 
-
-<div
-id="codigoGrande"
-class="codigo-grande"
->
-
-ALU000
-
-</div>
-
-
+<div id="codigoGrande" class="codigo-grande">ALU000</div>
 
 <div class="barcode">
-
-
-<svg id="codigoBarras"></svg>
-
-
-</div>
-
-
-</div>
-
-
+  <svg id="codigoBarras"></svg>
 </div>
 
 </div>
 
-
-
-<div class="aviso">
-
-Mostre esta carteirinha no leitor para registrar sua entrada e saída.
-
 </div>
-
-
+</div>
 
 <script>
-
-
-function gerarCarteirinha() {
-
-
-    const codigo = document
-        .getElementById("codigo")
-        .value
-        .trim()
-        .toUpperCase();
-
-
-    const nome = document
-        .getElementById("nome")
-        .value
-        .trim();
-
-
-    const turma = document
-        .getElementById("turma")
-        .value
-        .trim()
-        .toUpperCase();
-
-
-    const telefone = document
-        .getElementById("telefone")
-        .value
-        .trim();
-
-
-
-    /* VERIFICAÇÕES */
-
-
-    if (codigo === "") {
-
-        alert("Digite o código do aluno.");
-
-        return;
-
-    }
-
-
-    if (nome === "") {
-
-        alert("Digite o nome do aluno.");
-
-        return;
-
-    }
-
-
-    if (turma === "") {
-
-        alert("Digite a turma do aluno.");
-
-        return;
-
-    }
-
-
-
-    /* COLOCA OS DADOS NA CARTEIRINHA */
-
-
-    document
-        .getElementById("nomeCarteira")
-        .textContent = nome;
-
-
-    document
-        .getElementById("turmaCarteira")
-        .textContent = turma;
-
-
-    document
-        .getElementById("telefoneCarteira")
-        .textContent =
-        telefone || "Não informado";
-
-
-    document
-        .getElementById("codigoCarteira")
-        .textContent = codigo;
-
-
-    document
-        .getElementById("codigoGrande")
-        .textContent = codigo;
-
-
-
-    /* FOTO AUTOMÁTICA DO ALUNO */
-
-
-    const foto =
-        document.getElementById("fotoAluno");
-
-
-    foto.onerror = function () {
-
-        alert(
-            "Não encontrei a foto " +
-            codigo +
-            ".jpg na pasta Alunos."
-        );
-
-    };
-
-
-    foto.src =
-        "Alunos/" +
-        encodeURIComponent(codigo) +
-        ".jpg";
-
-
-
-    /* CÓDIGO DE BARRAS CODE 128 */
-
-
-    try {
-
-
-        JsBarcode(
-
-            "#codigoBarras",
-
-            codigo,
-
-            {
-
-                format: "CODE128",
-
-                width: 2,
-
-                height: 45,
-
-                displayValue: false,
-
-                margin: 3,
-
-                background: "#ffffff",
-
-                lineColor: "#000000"
-
-            }
-
-        );
-
-
-    }
-
-
-    catch (erro) {
-
-
-        alert(
-            "Não foi possível gerar o código de barras."
-        );
-
-
-    }
-
-
+function gerar(){
+
+  const codigo =
+    document.getElementById("codigo").value.trim().toUpperCase();
+
+  const nome =
+    document.getElementById("nome").value.trim();
+
+  const turma =
+    document.getElementById("turma").value.trim().toUpperCase();
+
+  const telefone =
+    document.getElementById("telefone").value.trim();
+
+  if(!codigo || !nome || !turma){
+    alert("Preencha código, nome e turma.");
+    return;
+  }
+
+  document.getElementById("nomeCarteira").textContent = nome;
+  document.getElementById("turmaCarteira").textContent = turma;
+  document.getElementById("telefoneCarteira").textContent =
+    telefone || "Não informado";
+  document.getElementById("codigoCarteira").textContent = codigo;
+  document.getElementById("codigoGrande").textContent = codigo;
+
+  const foto = document.getElementById("fotoAluno");
+
+  foto.src = "Alunos/" + codigo + ".jpg";
+
+  foto.onerror = function(){
+    alert("Foto " + codigo + ".jpg não encontrada.");
+  };
+
+  JsBarcode("#codigoBarras", codigo, {
+    format:"CODE128",
+    width:2,
+    height:45,
+    displayValue:false,
+    margin:2
+  });
 }
-
-
-
-/* =========================
-   IMPRIMIR
-========================= */
-
-
-function imprimirCarteirinha() {
-
-
-    const codigo =
-        document
-        .getElementById("codigoCarteira")
-        .textContent;
-
-
-    if (
-
-        codigo === "---" ||
-
-        codigo === "ALU000"
-
-    ) {
-
-
-        alert(
-            "Primeiro clique em Gerar Carteirinha."
-        );
-
-
-        return;
-
-
-    }
-
-
-    window.print();
-
-
-}
-
-
 </script>
 
-
 </body>
-
 </html>
