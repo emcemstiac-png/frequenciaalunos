@@ -259,3 +259,85 @@ button{
 
 <div class="botoes">
 <button class="
+<button class="gerar" onclick="gerar()">Gerar Carteirinha</button>
+<button class="imprimir" onclick="window.print()">Imprimir</button>
+</div>
+
+</div>
+
+<div class="carteira">
+
+<div class="topo">
+
+<img src="logo1.jpg" class="logo">
+
+<div class="titulo">
+<h1>CEMSTIAC</h1>
+<p>Centro Municipal de Educação em</p>
+<p>Ciência, Tecnologia, Inovação, Arte e Cultura</p>
+<div class="linha"></div>
+</div>
+
+</div>
+
+<div class="conteudo">
+
+<div class="foto-area">
+<img id="fotoAluno" class="foto">
+</div>
+
+<div class="dados">
+
+<strong>Aluno:</strong>
+<div id="nomeCarteira" class="nome"></div>
+
+<strong>Turma:</strong>
+<div id="turmaCarteira" class="valor"></div>
+
+<strong>Código:</strong>
+<div id="codigoCarteira" class="valor"></div>
+
+</div>
+
+</div>
+
+<div class="rodape">
+
+<div id="codigoGrande" class="codigo-grande"></div>
+
+<div class="barcode">
+<div class="barras"></div>
+</div>
+
+</div>
+
+</div>
+
+<div class="aviso">
+Mostre esta carteirinha no leitor para registrar sua entrada e saída.
+</div>
+
+<script>
+function gerar(){
+
+    const codigo =
+    document.getElementById("codigo").value.trim().toUpperCase();
+
+    const nome =
+    document.getElementById("nome").value.trim();
+
+    const turma =
+    document.getElementById("turma").value.trim().toUpperCase();
+
+    document.getElementById("nomeCarteira").innerText = nome;
+    document.getElementById("turmaCarteira").innerText = turma;
+    document.getElementById("codigoCarteira").innerText = codigo;
+    document.getElementById("codigoGrande").innerText = codigo;
+
+    document.getElementById("fotoAluno").src =
+    "Alunos/" + codigo + ".jpg";
+}
+</script>
+
+</body>
+</html>
